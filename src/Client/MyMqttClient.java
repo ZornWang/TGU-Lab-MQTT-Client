@@ -28,6 +28,8 @@ public class MyMqttClient {
                 String broker = "tcp://" + window.getAddressInputValue() + ":" + window.getPortInputValue();
                 String clientName = window.getClientIDInputValue();
                 Options.setCleanSession(window.getCleanSessionValue());
+                Options.setUserName(window.getUsernameInputValue());
+                Options.setPassword(window.getPasswordInputValue());
 
                 try {
                     client = new MqttClient(broker, clientName);

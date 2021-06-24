@@ -36,6 +36,8 @@ public class MqttWindow {
     private JRadioButton cleanSessionRadioButton;
     private JRadioButton retainRadioButton;
     private JButton buttonDisconnect;
+    private JTextField Username;
+    private JTextField Password;
 
     public void createWindow() {
         JFrame frame = new JFrame("MQTT 客户端 王准衡 1911630215");
@@ -64,6 +66,19 @@ public class MqttWindow {
 
     public String getClientIDInputValue() {
         return ClientID.getText();
+    }
+
+    public String getUsernameInputValue() {
+        return Username.getText();
+    }
+
+    public char[] getPasswordInputValue() {
+        String str = new String(Password.getText());
+        char[] password = new char[str.length()];
+        for (int i = 0; i < str.length(); i++) {
+            password[i] = str.charAt(i);
+        }
+        return password;
     }
 
     public boolean getRetainValue() {
@@ -106,18 +121,29 @@ public class MqttWindow {
 
     public void addMessage(Message msg) throws BadLocationException {
         StyledDocument doc = textPane1.getStyledDocument();
+        SimpleAttributeSet left = new SimpleAttributeSet();
+        StyleConstants.setAlignment(left, StyleConstants.ALIGN_LEFT);
+        SimpleAttributeSet right = new SimpleAttributeSet();
+        StyleConstants.setAlignment(right, StyleConstants.ALIGN_RIGHT);
         SimpleAttributeSet keyWord = new SimpleAttributeSet();
         if (msg.getType() == 1) {
             //发的
             StyleConstants.setForeground(keyWord, Color.blue);
+            StyleConstants.setBold(keyWord, true);
+            synchronized (this) {
+                doc.setParagraphAttributes(doc.getLength(), 1 , right, false);
+                doc.insertString(doc.getLength(), getTime() + " Topic: " + msg.getTopic() + "\n", keyWord);
+                doc.insertString(doc.getLength(), msg.getContent() + "\n\n", null);
+            }
         } else {
             //收的
             StyleConstants.setForeground(keyWord, Color.ORANGE);
-        }
-        StyleConstants.setBold(keyWord, true);
-        synchronized (this) {
-            doc.insertString(doc.getLength(), getTime() + " Topic: " + msg.getTopic() + "\n", keyWord);
-            doc.insertString(doc.getLength(), msg.getContent() + "\n\n", null);
+            StyleConstants.setBold(keyWord, true);
+            synchronized (this) {
+                doc.setParagraphAttributes(doc.getLength(), 1 , left, false);
+                doc.insertString(doc.getLength(), getTime() + " Topic: " + msg.getTopic() + "\n", keyWord);
+                doc.insertString(doc.getLength(), msg.getContent() + "\n\n", null);
+            }
         }
     }
 
